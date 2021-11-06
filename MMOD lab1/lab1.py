@@ -39,7 +39,7 @@ def calculate_correlation(x, y, x_expected_value, y_expected_value):
     correlation = sum([xi - x_expected_value for xi in x]) * sum([yi - y_expected_value for yi in y]) / \
                   ((sum([(xi - x_expected_value) ** 2 for xi in x])) * (
                       sum([(yi - y_expected_value) ** 2 for yi in y]))) ** (0.5)
-    return correlation / ((len(x)) ** 1 / 2 * len(y) ** 1 / 2)
+    return correlation / ((len(x)) ** 0.5 * len(y) ** 0.5)
 
 
 def calculate_interval_expected_values(expected_value, dispersion, alpha, amount):
@@ -57,8 +57,8 @@ def calculate_interval_dispersion(dispersion, amount, alpha):
 def calculate_pierce_criterion(theoretical_probabilities, empirical_probabilities, amount):
     xi_kvadrat = 0
     for i in range(len(theoretical_probabilities[0])):
-        xi_kvadrat += amount * (sum(numpy.array(theoretical_probabilities)[:, i]) -
-                                sum(numpy.array(empirical_probabilities)[:, i])) ** 2 / sum(
+        xi_kvadrat += (sum(numpy.array(theoretical_probabilities)[:, i]) -
+                        sum(numpy.array(empirical_probabilities)[:, i])) ** 2 / sum(
             numpy.array(empirical_probabilities)[:, i])
     return xi_kvadrat
 
@@ -113,7 +113,7 @@ def lab1(theortical_probabilities, x, y, amount):
 
     print('Коэффициент корреляции:')
     print(correlation)
-    alpha = 0.05
+    alpha = 0.01
     print('\nИнтервальная оценка мат ожидания')
     print('Теоретическая:')
     print('x: ', calculate_interval_expected_values(x_expected_value, x_dispersion, alpha, amount))
@@ -131,8 +131,8 @@ def lab1(theortical_probabilities, x, y, amount):
     print('\nКритерий согласия пирсона: ')
     pierce_criterion = calculate_pierce_criterion(theoretical_probabilities, empirical_probabilities, amount)
     print(pierce_criterion)
-    print('Xi квадрат для alpha = ', alpha, ' и k = 1 :')
-    xi_kvadrat = scipy.stats.chi2.ppf(1-alpha, 1)
+    print('Xi квадрат для alpha = ', alpha,':')
+    xi_kvadrat = scipy.stats.chi2.ppf(alpha, 1)
     print(xi_kvadrat)
     if (pierce_criterion < xi_kvadrat):
         print('Подтверждена гипотеза о соответствии полученных оценок характеристик  случайной величины требуемым')
@@ -140,4 +140,4 @@ def lab1(theortical_probabilities, x, y, amount):
         print('Гипотеза о соответствии полученных оценок характеристик случайной величины требуемым не подтверждена')
 
 
-lab1(theoretical_probabilities, x, y, 1000)
+lab1(theoretical_probabilities, x, y, 100000)
